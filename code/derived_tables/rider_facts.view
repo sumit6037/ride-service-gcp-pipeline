@@ -1,0 +1,72 @@
+# If necessary, uncomment the line below to include explore_source.
+# include: "mevron.model.lkml"
+
+view: rider_facts {
+  label: "Rider Facts"
+  derived_table: {
+    explore_source: summary {
+      column: rider_id { field: request.rider__rider_id }
+      column: count {}
+      column: gross_bookings {}
+      column: max_created_date {}
+      column: min_created_date {}
+      column: net_revenue {}
+      column: gross_bookings {}
+      column: total_distance {}
+    }
+  }
+  dimension: rider_id {
+    primary_key: yes
+  }
+  dimension_group: rider_first_ride {
+    type: time
+    timeframes: [raw, date, week, month]
+    sql: TIMESTAMP(${TABLE}.min_created_date) ;;
+  }
+  dimension_group: rider_last_ride {
+    type: time
+    timeframes: [raw, date, week, month]
+    sql: TIMESTAMP(${TABLE}.max_created_date) ;;
+  }
+  dimension_group: today {
+    type: time
+    hidden: yes
+    timeframes: [raw]
+    sql: CURRENT_TIMESTAMP() ;;
+  }
+  dimension_group: since_riders_first_ride {
+    type: duration
+    sql_start: ${rider_first_ride_raw} ;;
+    sql_end: ${today_raw} ;;
+    intervals: [day, week, month]
+  }
+  dimension_group: since_riders_last_ride {
+    type: duration
+    sql_start: ${rider_last_ride_raw} ;;
+    sql_end: ${today_raw} ;;
+    intervals: [day, week, month]
+  }
+  dimension: is_active {
+    type: yesno
+    sql: ${days_since_riders_last_ride} < 30 ;;
+  }
+  dimension: lifetime_distance {
+    value_format_name: decimal_0
+    type: number
+    sql: ${TABLE}.total_distance ;;
+  }
+  dimension: lifetime_gross_bookings {
+    value_format_name: decimal_0
+    type: number
+    sql: ${TABLE}.gross_bookings ;;
+  }
+  dimension: lifetime_net_revenue {
+    value_format_name: decimal_0
+    type: number
+    sql: ${TABLE}.net_revenue ;;
+  }
+  dimension: lifetime_count_of_rides {
+    type: number
+    sql: ${TABLE}.count ;;
+  }
+}

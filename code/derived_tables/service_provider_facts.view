@@ -1,0 +1,66 @@
+# If necessary, uncomment the line below to include explore_source.
+# include: "mevron.model.lkml"
+
+view: service_provider_facts {
+  view_label: "Service Provider Facts"
+  derived_table: {
+    explore_source: summary {
+      column: service_provider_id { field: offer.service_provider__service_provider_id }
+      column: min_created_date {}
+      column: max_created_date {}
+      column: total_distance {}
+      column: gross_bookings {}
+      column: count {}
+    }
+  }
+  dimension: service_provider_id {
+    label: "Service Provider ID"
+    primary_key: yes
+  }
+  dimension_group: service_provider_first_ride {
+    label: "Service Provider's First Ride"
+    type: time
+    timeframes: [raw, date, week, month]
+    sql: TIMESTAMP(${TABLE}.min_created_date) ;;
+  }
+  dimension_group: service_provider_last_ride {
+    label: "Service Provider's Last Ride"
+    type: time
+    timeframes: [raw, date, week, month]
+    sql: TIMESTAMP(${TABLE}.max_created_date) ;;
+  }
+  dimension_group: today {
+    type: time
+    hidden: yes
+    timeframes: [raw]
+    sql: CURRENT_TIMESTAMP() ;;
+  }
+  dimension_group: since_service_provider_first_ride {
+    type: duration
+    sql_start: ${service_provider_first_ride_raw} ;;
+    sql_end: ${today_raw} ;;
+    intervals: [day, week, month]
+  }
+  dimension_group: since_service_provider_last_ride {
+    type: duration
+    sql_start: ${service_provider_last_ride_raw} ;;
+    sql_end: ${today_raw} ;;
+    intervals: [day, week, month]
+  }
+  dimension: is_active {
+    type: yesno
+    sql: ${days_since_service_provider_last_ride} < 30 ;;
+  }
+  dimension: total_distance {
+    value_format_name: decimal_0
+    type: number
+  }
+  dimension: gross_bookings {
+    value_format_name: decimal_0
+    type: number
+  }
+  dimension: count_of_rides {
+    type: number
+    sql: ${TABLE}.count ;;
+  }
+}
