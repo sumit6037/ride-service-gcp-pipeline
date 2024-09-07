@@ -1,0 +1,280 @@
+view: offer {
+  sql_table_name: `mevron-1330b.mevron_test.offer` ;;
+
+  dimension: car__color {
+    type: string
+    sql: ${TABLE}.car.color ;;
+    group_label: "Car"
+    group_item_label: "Color"
+  }
+  dimension: car__model {
+    type: string
+    sql: ${TABLE}.car.model ;;
+    group_label: "Car"
+    group_item_label: "Model"
+  }
+  dimension: car__number_of_seats {
+    type: number
+    sql: ${TABLE}.car.numberOfSeats ;;
+    group_label: "Car"
+    group_item_label: "Number of Seats"
+  }
+  dimension: car__options {
+    hidden: yes
+    sql: ${TABLE}.car.options ;;
+    group_label: "Car"
+    group_item_label: "Options"
+  }
+  dimension: car__plate_number {
+    type: string
+    sql: ${TABLE}.car.plateNumber ;;
+    group_label: "Car"
+    group_item_label: "Plate Number"
+  }
+  dimension: car__vehicle_type {
+    type: string
+    sql: ${TABLE}.car.vehicleType ;;
+    group_label: "Car"
+    group_item_label: "Vehicle Type"
+  }
+  dimension: car__year {
+    type: number
+    sql: ${TABLE}.car.year ;;
+    group_label: "Car"
+    group_item_label: "Year"
+  }
+  dimension_group: data {
+    type: time
+    timeframes: [raw, date, week, month, quarter, year]
+    convert_tz: no
+    datatype: date
+    sql: ${TABLE}.data_date ;;
+  }
+  dimension: service_provider__service_provider_id {
+    type: string
+    sql: ${TABLE}.driver.driverId ;;
+    group_label: "Service Provider"
+    group_item_label: "Service Provider ID"
+  }
+  dimension: service_provider__email {
+    type: string
+    sql: ${TABLE}.driver.email ;;
+    group_label: "Service Provider"
+    group_item_label: "Email"
+  }
+  dimension: service_provider__image_url {
+    type: string
+    sql: ${TABLE}.driver.imageUrl ;;
+    group_label: "Service Provider"
+    group_item_label: "Image URL"
+  }
+  dimension: service_provider__name {
+    type: string
+    sql: ${TABLE}.driver.name ;;
+    group_label: "Service Provider"
+    group_item_label: "Name"
+  }
+  dimension: service_provider__phone {
+    type: number
+    sql: ${TABLE}.driver.phone ;;
+    group_label: "Service Provider"
+    group_item_label: "Phone"
+  }
+  dimension_group: eta {
+    label: "ETA"
+    type: time
+    timeframes: [raw, time]
+    sql: TIMESTAMP(${TABLE}.eta) ;;
+  }
+  dimension: order_id {
+    primary_key: yes
+    type: string
+    sql: ${TABLE}.orderId ;;
+  }
+  dimension: tariff__asap_booking {
+    type: yesno
+    sql: ${TABLE}.tariff.asapBooking ;;
+    group_label: "Tariff"
+    group_item_label: "Asap Booking"
+  }
+  dimension: tariff__company_name {
+    type: string
+    sql: ${TABLE}.tariff.companyName ;;
+    group_label: "Tariff"
+    group_item_label: "Company Name"
+  }
+  dimension: tariff__cost {
+    type: number
+    sql: ${TABLE}.tariff.cost ;;
+    group_label: "Tariff"
+    group_item_label: "Cost"
+  }
+  dimension: tariff__currency {
+    type: string
+    sql: ${TABLE}.tariff.currency ;;
+    group_label: "Tariff"
+    group_item_label: "Currency"
+  }
+  dimension: tariff__service_provider_can_set_cost {
+    type: yesno
+    sql: ${TABLE}.tariff.driverCanSetCost ;;
+    group_label: "Tariff"
+    group_item_label: "Service Provider Can Set Cost"
+  }
+  dimension: tariff__service_provider_cancellation_fee {
+    type: number
+    sql: ${TABLE}.tariff.driverCancellationFee ;;
+    group_label: "Tariff"
+    group_item_label: "Service Provider Cancellation Fee"
+  }
+  dimension: tariff__fixed_cost {
+    type: yesno
+    sql: ${TABLE}.tariff.fixedCost ;;
+    group_label: "Tariff"
+    group_item_label: "Fixed Cost"
+  }
+  dimension: tariff__fixed_fares_available {
+    type: yesno
+    sql: ${TABLE}.tariff.fixedFaresAvailable ;;
+    group_label: "Tariff"
+    group_item_label: "Fixed Fares Available"
+  }
+  dimension: tariff__flag_down_fee {
+    type: number
+    sql: ${TABLE}.tariff.flagDownFee ;;
+    group_label: "Tariff"
+    group_item_label: "Flag Down Fee"
+  }
+  dimension: tariff__maximum_charge {
+    type: number
+    sql: ${TABLE}.tariff.maximumCharge ;;
+    group_label: "Tariff"
+    group_item_label: "Maximum Charge"
+  }
+  dimension: tariff__minimum_charge {
+    type: number
+    sql: ${TABLE}.tariff.minimumCharge ;;
+    group_label: "Tariff"
+    group_item_label: "Minimum Charge"
+  }
+  dimension: tariff__minimum_pre_booking_delay {
+    type: number
+    sql: ${TABLE}.tariff.minimumPreBookingDelay ;;
+    group_label: "Tariff"
+    group_item_label: "Minimum Pre Booking Delay"
+  }
+  dimension: tariff__name {
+    type: string
+    sql: ${TABLE}.tariff.name ;;
+    group_label: "Tariff"
+    group_item_label: "Name"
+  }
+  dimension: tariff__number_of_seats {
+    type: number
+    sql: ${TABLE}.tariff.numberOfSeats ;;
+    group_label: "Tariff"
+    group_item_label: "Number of Seats"
+  }
+  dimension: tariff__passenger_cancellation_fee {
+    type: number
+    sql: ${TABLE}.tariff.passengerCancellationFee ;;
+    group_label: "Tariff"
+    group_item_label: "Passenger Cancellation Fee"
+  }
+  dimension: tariff__payment_methods {
+    hidden: yes
+    sql: ${TABLE}.tariff.paymentMethods ;;
+    group_label: "Tariff"
+    group_item_label: "Payment Methods"
+  }
+  dimension: tariff__per_distance_unit_fee {
+    type: number
+    sql: ${TABLE}.tariff.perDistanceUnitFee ;;
+    group_label: "Tariff"
+    group_item_label: "Per Distance Unit Fee"
+  }
+  dimension: tariff__per_hour_fee {
+    type: number
+    sql: ${TABLE}.tariff.perHourFee ;;
+    group_label: "Tariff"
+    group_item_label: "Per Hour Fee"
+  }
+  dimension: tariff__pre_booking {
+    type: yesno
+    sql: ${TABLE}.tariff.preBooking ;;
+    group_label: "Tariff"
+    group_item_label: "Pre Booking"
+  }
+  dimension: tariff__prepaid_supported {
+    type: yesno
+    sql: ${TABLE}.tariff.prepaidSupported ;;
+    group_label: "Tariff"
+    group_item_label: "Prepaid Supported"
+  }
+  dimension: tariff__speed_break_point {
+    type: number
+    sql: ${TABLE}.tariff.speedBreakPoint ;;
+    group_label: "Tariff"
+    group_item_label: "Speed Break Point"
+  }
+  dimension: tariff__tariff_id {
+    type: string
+    sql: ${TABLE}.tariff.tariffId ;;
+    group_label: "Tariff"
+    group_item_label: "Tariff ID"
+  }
+  dimension: tariff__tariff_mode {
+    type: string
+    sql: ${TABLE}.tariff.tariffMode ;;
+    group_label: "Tariff"
+    group_item_label: "Tariff Mode"
+  }
+  dimension: tariff__tariff_type {
+    type: string
+    sql: ${TABLE}.tariff.tariffType ;;
+    group_label: "Tariff"
+    group_item_label: "Tariff Type"
+  }
+  dimension: tariff__taximeter_mode {
+    type: string
+    sql: ${TABLE}.tariff.taximeterMode ;;
+    group_label: "Tariff"
+    group_item_label: "Taximeter Mode"
+  }
+  dimension: tariff__unit_of_length {
+    type: string
+    sql: ${TABLE}.tariff.unitOfLength ;;
+    group_label: "Tariff"
+    group_item_label: "Unit of Length"
+  }
+  dimension: tariff__vehicle_type {
+    type: string
+    sql: ${TABLE}.tariff.vehicleType ;;
+    group_label: "Tariff"
+    group_item_label: "Vehicle Type"
+  }
+  measure: count {
+    type: count
+    drill_fields: [service_provider__name, tariff__name, tariff__company_name]
+  }
+  measure: count_of_service_providers {
+    type: count_distinct
+    sql: ${service_provider__service_provider_id} ;;
+  }
+}
+
+view: offer__car__options {
+
+  dimension: offer__car__options {
+    type: string
+    sql: offer__car__options ;;
+  }
+}
+
+view: offer__tariff__payment_methods {
+
+  dimension: offer__tariff__payment_methods {
+    type: string
+    sql: offer__tariff__payment_methods ;;
+  }
+}

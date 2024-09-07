@@ -1,0 +1,76 @@
+# Un-hide and use this explore, or copy the joins into another explore, to get all the fully nested relationships from this view
+explore: vehicle {
+  hidden: yes
+    join: vehicle__vehicles {
+      view_label: "Vehicle: Vehicles"
+      sql: LEFT JOIN UNNEST(${vehicle.vehicles}) as vehicle__vehicles ;;
+      relationship: one_to_many
+    }
+}
+view: vehicle {
+  sql_table_name: `mevron-1330b.mevron_test.vehicle` ;;
+
+  dimension_group: data {
+    type: time
+    timeframes: [raw, date, week, month, quarter, year]
+    convert_tz: no
+    datatype: date
+    sql: ${TABLE}.data_date ;;
+  }
+  dimension: vehicles {
+    hidden: yes
+    sql: ${TABLE}.vehicles ;;
+  }
+  measure: count {
+    type: count
+  }
+}
+
+view: vehicle__vehicles {
+
+  dimension: location__accuracy {
+    type: number
+    sql: ${TABLE}.location.accuracy ;;
+    group_label: "Location"
+    group_item_label: "Accuracy"
+  }
+  dimension: location__bearing {
+    type: number
+    sql: ${TABLE}.location.bearing ;;
+    group_label: "Location"
+    group_item_label: "Bearing"
+  }
+  dimension: location__lat {
+    type: number
+    sql: ${TABLE}.location.lat ;;
+    group_label: "Location"
+    group_item_label: "Lat"
+  }
+  dimension: location__lng {
+    type: number
+    sql: ${TABLE}.location.lng ;;
+    group_label: "Location"
+    group_item_label: "Lng"
+  }
+  dimension: location__speed {
+    type: number
+    sql: ${TABLE}.location.speed ;;
+    group_label: "Location"
+    group_item_label: "Speed"
+  }
+  dimension: location__time {
+    type: string
+    sql: ${TABLE}.location.time ;;
+    group_label: "Location"
+    group_item_label: "Time"
+  }
+  dimension: vehicle__vehicles {
+    type: string
+    hidden: yes
+    sql: vehicle__vehicles ;;
+  }
+  dimension: vehicle_type {
+    type: string
+    sql: vehicleType ;;
+  }
+}

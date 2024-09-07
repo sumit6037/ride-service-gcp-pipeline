@@ -1,0 +1,199 @@
+# Un-hide and use this explore, or copy the joins into another explore, to get all the fully nested relationships from this view
+explore: driver_details {
+  hidden: yes
+    join: driver_details__wallet {
+      view_label: "Driver Details: Wallet"
+      sql: LEFT JOIN UNNEST(${driver_details.wallet}) as driver_details__wallet ;;
+      relationship: one_to_many
+    }
+    join: driver_details__documents {
+      view_label: "Driver Details: Documents"
+      sql: LEFT JOIN UNNEST(${driver_details.documents}) as driver_details__documents ;;
+      relationship: one_to_many
+    }
+    join: driver_details__car__options {
+      view_label: "Driver Details: Car Options"
+      sql: LEFT JOIN UNNEST(${driver_details.car__options}) as driver_details__car__options ;;
+      relationship: one_to_many
+    }
+}
+view: driver_details {
+  sql_table_name: `mevron-1330b.mevron_test.driver_details` ;;
+
+  dimension: car__board_number {
+    type: string
+    sql: ${TABLE}.car.boardNumber ;;
+    group_label: "Car"
+    group_item_label: "Board Number"
+  }
+  dimension: car__color {
+    type: string
+    sql: ${TABLE}.car.color ;;
+    group_label: "Car"
+    group_item_label: "Color"
+  }
+  dimension: car__image_url {
+    type: string
+    sql: ${TABLE}.car.imageUrl ;;
+    group_label: "Car"
+    group_item_label: "Image URL"
+  }
+  dimension: car__model {
+    type: string
+    sql: ${TABLE}.car.model ;;
+    group_label: "Car"
+    group_item_label: "Model"
+  }
+  dimension: car__number_of_seats {
+    type: number
+    sql: ${TABLE}.car.numberOfSeats ;;
+    group_label: "Car"
+    group_item_label: "Number of Seats"
+  }
+  dimension: car__options {
+    hidden: yes
+    sql: ${TABLE}.car.options ;;
+    group_label: "Car"
+    group_item_label: "Options"
+  }
+  dimension: car__plate_number {
+    type: string
+    sql: ${TABLE}.car.plateNumber ;;
+    group_label: "Car"
+    group_item_label: "Plate Number"
+  }
+  dimension: car__vehicle_type {
+    type: string
+    sql: ${TABLE}.car.vehicleType ;;
+    group_label: "Car"
+    group_item_label: "Vehicle Type"
+  }
+  dimension: car__year {
+    type: number
+    sql: ${TABLE}.car.year ;;
+    group_label: "Car"
+    group_item_label: "Year"
+  }
+  dimension: company_id {
+    type: string
+    # hidden: yes
+    sql: ${TABLE}.companyId ;;
+  }
+  dimension: custom_key {
+    type: string
+    sql: ${TABLE}.customKey ;;
+  }
+  dimension_group: data {
+    type: time
+    timeframes: [raw, date, week, month, quarter, year]
+    convert_tz: no
+    datatype: date
+    sql: ${TABLE}.data_date ;;
+  }
+  dimension: documents {
+    hidden: yes
+    sql: ${TABLE}.documents ;;
+  }
+  dimension: driver_id {
+    type: string
+    sql: ${TABLE}.driverId ;;
+  }
+  dimension: driver_license {
+    type: string
+    sql: ${TABLE}.driverLicense ;;
+  }
+  dimension: email {
+    type: string
+    sql: ${TABLE}.email ;;
+  }
+  dimension: full_name {
+    type: string
+    sql: ${TABLE}.fullName ;;
+  }
+  dimension: full_name_overridden {
+    type: yesno
+    sql: ${TABLE}.fullNameOverridden ;;
+  }
+  dimension: image_url {
+    type: string
+    sql: ${TABLE}.imageUrl ;;
+  }
+  dimension: image_url_overridden {
+    type: yesno
+    sql: ${TABLE}.imageUrlOverridden ;;
+  }
+  dimension: name {
+    type: string
+    sql: ${TABLE}.name ;;
+  }
+  dimension: phone {
+    type: string
+    sql: ${TABLE}.phone ;;
+  }
+  dimension: state {
+    type: string
+    sql: ${TABLE}.state ;;
+  }
+  dimension: wallet {
+    hidden: yes
+    sql: ${TABLE}.wallet ;;
+  }
+  measure: count {
+    type: count
+    drill_fields: [full_name, name, company.company_id, company.name]
+  }
+}
+
+view: driver_details__wallet {
+
+  dimension: amount {
+    type: number
+    sql: amount ;;
+  }
+  dimension: currency {
+    type: string
+    sql: currency ;;
+  }
+  dimension: driver_details__wallet {
+    type: string
+    hidden: yes
+    sql: driver_details__wallet ;;
+  }
+}
+
+view: driver_details__documents {
+
+  dimension: category {
+    type: string
+    sql: category ;;
+  }
+  dimension: code {
+    type: string
+    sql: code ;;
+  }
+  dimension: content {
+    type: string
+    sql: content ;;
+  }
+  dimension: driver_details__documents {
+    type: string
+    hidden: yes
+    sql: driver_details__documents ;;
+  }
+  dimension: name {
+    type: string
+    sql: ${TABLE}.name ;;
+  }
+  dimension: pattern {
+    type: string
+    sql: pattern ;;
+  }
+}
+
+view: driver_details__car__options {
+
+  dimension: driver_details__car__options {
+    type: string
+    sql: driver_details__car__options ;;
+  }
+}

@@ -1,0 +1,152 @@
+# Un-hide and use this explore, or copy the joins into another explore, to get all the fully nested relationships from this view
+explore: tariff {
+  hidden: yes
+    join: tariff__tariffs {
+      view_label: "Tariff: Tariffs"
+      sql: LEFT JOIN UNNEST(${tariff.tariffs}) as tariff__tariffs ;;
+      relationship: one_to_many
+    }
+    join: tariff__tariffs__payment_methods {
+      view_label: "Tariff: Tariffs Paymentmethods"
+      sql: LEFT JOIN UNNEST(${tariff__tariffs.payment_methods}) as tariff__tariffs__payment_methods ;;
+      relationship: one_to_many
+    }
+}
+view: tariff {
+  sql_table_name: `mevron-1330b.mevron_test.tariff` ;;
+  drill_fields: [tariffs__tariff_id]
+
+  dimension: tariffs__tariff_id {
+    primary_key: yes
+    type: string
+    sql: ${TABLE}.tariffs.tariffId ;;
+    group_label: "Tariffs"
+    group_item_label: "Tariff ID"
+  }
+  dimension_group: data {
+    type: time
+    timeframes: [raw, date, week, month, quarter, year]
+    convert_tz: no
+    datatype: date
+    sql: ${TABLE}.data_date ;;
+  }
+  dimension: tariffs {
+    hidden: yes
+    sql: ${TABLE}.tariffs ;;
+  }
+  measure: count {
+    type: count
+    drill_fields: [tariffs__tariff_id, request.count]
+  }
+}
+
+view: tariff__tariffs {
+  drill_fields: [tariff_id]
+
+  dimension: tariff_id {
+    primary_key: yes
+    type: string
+    sql: tariffId ;;
+  }
+  dimension: asap_booking {
+    type: yesno
+    sql: asapBooking ;;
+  }
+  dimension: company_name {
+    type: string
+    sql: companyName ;;
+  }
+  dimension: currency {
+    type: string
+    sql: currency ;;
+  }
+  dimension: driver_can_set_cost {
+    type: yesno
+    sql: driverCanSetCost ;;
+  }
+  dimension: fixed_cost {
+    type: yesno
+    sql: fixedCost ;;
+  }
+  dimension: fixed_fares_available {
+    type: yesno
+    sql: fixedFaresAvailable ;;
+  }
+  dimension: flag_down_fee {
+    type: number
+    sql: flagDownFee ;;
+  }
+  dimension: minimum_charge {
+    type: number
+    sql: minimumCharge ;;
+  }
+  dimension: minimum_pre_booking_delay {
+    type: number
+    sql: minimumPreBookingDelay ;;
+  }
+  dimension: name {
+    type: string
+    sql: ${TABLE}.name ;;
+  }
+  dimension: number_of_seats {
+    type: number
+    sql: numberOfSeats ;;
+  }
+  dimension: passenger_cancellation_fee {
+    type: number
+    sql: passengerCancellationFee ;;
+  }
+  dimension: payment_methods {
+    hidden: yes
+    sql: paymentMethods ;;
+  }
+  dimension: per_distance_unit_fee {
+    type: number
+    sql: perDistanceUnitFee ;;
+  }
+  dimension: per_hour_fee {
+    type: number
+    sql: perHourFee ;;
+  }
+  dimension: pre_booking {
+    type: yesno
+    sql: preBooking ;;
+  }
+  dimension: prepaid_supported {
+    type: yesno
+    sql: prepaidSupported ;;
+  }
+  dimension: tariff__tariffs {
+    type: string
+    hidden: yes
+    sql: tariff__tariffs ;;
+  }
+  dimension: tariff_mode {
+    type: string
+    sql: tariffMode ;;
+  }
+  dimension: tariff_type {
+    type: string
+    sql: tariffType ;;
+  }
+  dimension: taximeter_mode {
+    type: string
+    sql: taximeterMode ;;
+  }
+  dimension: unit_of_length {
+    type: string
+    sql: unitOfLength ;;
+  }
+  dimension: vehicle_type {
+    type: string
+    sql: vehicleType ;;
+  }
+}
+
+view: tariff__tariffs__payment_methods {
+
+  dimension: tariff__tariffs__payment_methods {
+    type: string
+    sql: tariff__tariffs__payment_methods ;;
+  }
+}

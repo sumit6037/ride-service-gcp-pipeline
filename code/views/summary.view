@@ -1,0 +1,328 @@
+
+view: summary {
+  view_label: "Ride Summary"
+  sql_table_name: `mevron-1330b.mevron_test.summary` ;;
+
+  dimension: comment_by_rider {
+    type: string
+    sql: ${TABLE}.commentByClient ;;
+  }
+  dimension_group: create {
+    type: time
+    timeframes: [raw, time, date, hour_of_day, week, month, quarter, year]
+    sql: ${TABLE}.createTime ;;
+  }
+  dimension: currency {
+    type: string
+    sql: ${TABLE}.currency ;;
+  }
+  dimension_group: data {
+    type: time
+    timeframes: [raw, date, week, month, quarter, year]
+    convert_tz: no
+    datatype: date
+    sql: ${TABLE}.data_date ;;
+  }
+  dimension: seconds_between_eta_and_pickup {
+    type: duration_second
+    sql_start: ${offer.eta_raw} ;;
+    sql_end: ${pickup_raw} ;;
+  }
+  dimension: service_provider_arrived_on_time {
+    type: yesno
+    sql: ${seconds_between_eta_and_pickup} < 0 ;;
+  }
+  dimension: wait_time_seconds {
+    type: duration_second
+    description: "Time between creation of the order and pick-up"
+    sql_start: ${create_raw} ;;
+    sql_end: ${pickup_raw} ;;
+  }
+  dimension: discount__amount {
+    type: number
+    sql: ${TABLE}.discount.amount ;;
+    group_label: "Discount"
+    group_item_label: "Amount"
+  }
+  dimension: discount__name {
+    type: string
+    sql: ${TABLE}.discount.name ;;
+    group_label: "Discount"
+    group_item_label: "Name"
+  }
+  dimension: dropoff_location__lat {
+    hidden: yes
+    type: number
+    sql: ${TABLE}.dropoffLocation.lat ;;
+    group_label: "Dropoff Location"
+    group_item_label: "Lat"
+  }
+  dimension: dropoff_location__lng {
+    hidden: yes
+    type: number
+    sql: ${TABLE}.dropoffLocation.lng ;;
+    group_label: "Dropoff Location"
+    group_item_label: "Lng"
+  }
+  dimension: dropoff_location {
+    type: location
+    sql_longitude: ${dropoff_location__lng} ;;
+    sql_latitude: ${dropoff_location__lat} ;;
+  }
+  dimension_group: dropoff {
+    type: time
+    timeframes: [raw, time, date, week, month, quarter, year]
+    sql: ${TABLE}.dropoffTime ;;
+  }
+  dimension: ride_time_seconds {
+    type: duration_second
+    sql_start: ${pickup_raw} ;;
+    sql_end: ${dropoff_raw} ;;
+  }
+  dimension: extra_cost {
+    type: number
+    sql: ${TABLE}.extraCost ;;
+  }
+  dimension: final_cost {
+    type: number
+    sql: ${TABLE}.finalCost ;;
+  }
+  dimension: order_id {
+    primary_key: yes
+    type: string
+    sql: ${TABLE}.orderId ;;
+  }
+  dimension: payments {
+    hidden: yes
+    sql: ${TABLE}.payments ;;
+  }
+  dimension: pickup_location__lat {
+    hidden: yes
+    type: number
+    sql: ${TABLE}.pickupLocation.lat ;;
+    group_label: "Pickup Location"
+    group_item_label: "Lat"
+  }
+  dimension: pickup_location__lng {
+    hidden: yes
+    type: number
+    sql: ${TABLE}.pickupLocation.lng ;;
+    group_label: "Pickup Location"
+    group_item_label: "Lng"
+  }
+  dimension: pickup_location {
+    type: location
+    sql_latitude: ${pickup_location__lat} ;;
+    sql_longitude: ${pickup_location__lng} ;;
+  }
+  dimension_group: pickup {
+    type: time
+    timeframes: [raw, time, date, week, month, quarter, year]
+    sql: ${TABLE}.pickupTime ;;
+  }
+  dimension: rating_by_rider {
+    type: number
+    sql: ${TABLE}.ratingByClient ;;
+  }
+  dimension: rating_by_service_provider {
+    type: number
+    sql: ${TABLE}.ratingByDriver ;;
+  }
+  dimension: tips {
+    type: number
+    sql: ${TABLE}.tips ;;
+  }
+  dimension: ride_cost {
+    type: number
+    value_format_name: decimal_2
+    sql: ${TABLE}.tripCost ;;
+  }
+  dimension: fare_per_km {
+    type: number
+    sql: 1.0 * ${ride_cost}/nullif(${ride_distance},0) ;;
+  }
+  dimension: ride_net_revenue {
+    type: number
+    value_format_name: decimal_2
+    sql: ${ride_cost} * .1 ;;
+  }
+
+  dimension: ride_distance {
+    type: number
+    sql: ${TABLE}.tripDistance ;;
+  }
+  dimension: ride_duration {
+    type: number
+    sql: ${TABLE}.tripDuration ;;
+  }
+  dimension: unit_of_length {
+    type: string
+    sql: ${TABLE}.unitOfLength ;;
+  }
+  dimension_group: since_service_provider_first_ride {
+    type: duration
+    sql_start: ${service_provider_facts.service_provider_first_ride_raw} ;;
+    sql_end: ${create_raw} ;;
+    intervals: [day, week, month]
+  }
+  dimension_group: since_rider_first_ride {
+    type: duration
+    sql_start: ${rider_facts.rider_first_ride_raw} ;;
+    sql_end: ${create_raw} ;;
+    intervals: [day, week, month]
+  }
+  measure: count {
+    type: count
+    drill_fields: [discount__name]
+  }
+  measure: total_distance {
+    type: sum
+    sql: ${ride_distance} ;;
+  }
+  measure: gross_bookings {
+    type: sum
+    value_format_name: decimal_0
+    sql: ${ride_cost} ;;
+  }
+  measure: gross_bookings_per_service_provider {
+    type: number
+    value_format_name: decimal_1
+    sql: 1.0 * ${gross_bookings}/nullif(${offer.count_of_service_providers},0) ;;
+  }
+  measure: average_fare_per_km {
+    type: average
+    sql: ${fare_per_km} ;;
+    value_format_name: decimal_2
+  }
+  measure: net_revenue {
+    type: sum
+    value_format_name: decimal_0
+    sql: ${ride_net_revenue} ;;
+  }
+  measure: average_revenue_per_user {
+    type: number
+    sql: 1.0 * ${net_revenue}/nullif(${request.count_of_riders},0) ;;
+  }
+  measure: min_created_date {
+    hidden: yes
+    type: date
+    sql: MIN(${create_date}) ;;
+  }
+  measure: max_created_date {
+    hidden: yes
+    type: date
+    sql: MIN(${create_date}) ;;
+  }
+  measure: mean_rating_by_rider {
+    group_label: "Ratings"
+    type: average
+    value_format_name: decimal_1
+    sql: ${rating_by_rider} ;;
+  }
+  measure: median_rating_by_rider {
+    group_label: "Ratings"
+    type: median
+    value_format_name: decimal_1
+    sql: ${rating_by_rider} ;;
+  }
+  measure: mean_rating_by_service_provider {
+    group_label: "Ratings"
+    type: average
+    value_format_name: decimal_1
+    sql: ${rating_by_service_provider} ;;
+  }
+  measure: median_rating_by_service_provider {
+    group_label: "Ratings"
+    type: median
+    value_format_name: decimal_1
+    sql: ${rating_by_service_provider} ;;
+  }
+  measure: average_wait_time_seconds {
+    group_label: "Wait Time"
+    description: "Time between creation of the order and pick-up"
+    type: average
+    value_format_name: decimal_0
+    sql: ${wait_time_seconds} ;;
+  }
+  measure: median_wait_time_seconds {
+    group_label: "Wait Time"
+    description: "Time between creation of the order and pick-up"
+    type: median
+    value_format_name: decimal_0
+    sql: ${wait_time_seconds} ;;
+  }
+  measure: average_eta_accuracy_seconds {
+    group_label: "ETA Accuracy"
+    label: "Average ETA Accuracy (s)"
+    description: "Number of seconds between ETA and actual arrival. If >300 then service provider was late"
+    type: average
+    value_format_name: decimal_0
+    sql: ${seconds_between_eta_and_pickup} ;;
+  }
+  measure: median_eta_accuracy_seconds {
+    group_label: "ETA Accuracy"
+    label: "Median ETA Accuracy (s)"
+    description: "Number of seconds between ETA and actual arrival. If >300 then service provider was late"
+    type: median
+    value_format_name: decimal_0
+    sql: ${seconds_between_eta_and_pickup} ;;
+  }
+  measure: average_ride_time_seconds {
+    type: average
+    value_format_name: decimal_0
+    sql: ${ride_time_seconds} ;;
+  }
+  measure: average_fare_per_ride {
+    type: number
+    value_format_name: decimal_0
+    sql: 1.0 * ${gross_bookings} / nullif(${count},0) ;;
+  }
+  measure: average_ride_distance {
+    type: number
+    value_format_name: decimal_1
+    sql: 1.0 *  ${total_distance}/nullif(${count},0);;
+  }
+  measure: count_rides_service_provider_arrived_on_time {
+    type: count
+    hidden: yes
+    filters: [service_provider_arrived_on_time: "Yes"]
+  }
+  measure: on_time_rate {
+    type: number
+    group_label: "ETA Accuracy"
+    value_format_name: percent_0
+    sql: 1.0 * ${count_rides_service_provider_arrived_on_time}/nullif(${count},0) ;;
+  }
+  measure: cancellation_rate {
+    type: number
+    value_format_name: percent_1
+    sql: 1.0 * ${update.count_of_cancelled}/nullif(${count},0) ;;
+  }
+  measure: completion_rate {
+    type: number
+    value_format_name: percent_1
+    sql: 1.0 * ${update.count_of_completed}/nullif(${count},0) ;;
+  }
+}
+
+view: summary__payments {
+
+  dimension: amount {
+    type: number
+    sql: amount ;;
+  }
+  dimension: method {
+    type: string
+    sql: method ;;
+  }
+  dimension: summary__payments {
+    type: string
+    hidden: yes
+    sql: summary__payments ;;
+  }
+  dimension_group: time {
+    type: time
+    timeframes: [raw, time, date, week, month, quarter, year]
+    sql: time ;;
+  }
+}

@@ -1,0 +1,227 @@
+view: request {
+  sql_table_name: `mevron-1330b.mevron_test.request` ;;
+
+  dimension: rider__rider_id {
+    type: string
+    sql: ${TABLE}.client.clientId ;;
+    group_label: "Rider"
+    group_item_label: "Rider ID"
+  }
+  dimension: rider__email {
+    type: string
+    sql: ${TABLE}.client.email ;;
+    group_label: "Rider"
+    group_item_label: "Email"
+  }
+  dimension: rider__image_url {
+    type: string
+    sql: ${TABLE}.client.imageUrl ;;
+    group_label: "Rider"
+    group_item_label: "Image URL"
+  }
+  dimension: rider__name {
+    type: string
+    sql: ${TABLE}.client.name ;;
+    group_label: "Rider"
+    group_item_label: "Name"
+  }
+  dimension: rider__phone {
+    type: number
+    sql: ${TABLE}.client.phone ;;
+    group_label: "Rider"
+    group_item_label: "Phone"
+  }
+  dimension: currency {
+    type: string
+    sql: ${TABLE}.currency ;;
+  }
+  dimension_group: data {
+    type: time
+    timeframes: [raw, date, week, month, quarter, year]
+    convert_tz: no
+    datatype: date
+    sql: ${TABLE}.data_date ;;
+  }
+  dimension: extra_options {
+    hidden: yes
+    sql: ${TABLE}.extraOptions ;;
+  }
+  dimension: notes {
+    type: string
+    sql: ${TABLE}.notes ;;
+  }
+  dimension: number_of_seats {
+    type: number
+    sql: ${TABLE}.numberOfSeats ;;
+  }
+  dimension: order_id {
+    primary_key: yes
+    type: string
+    sql: ${TABLE}.orderId ;;
+  }
+  dimension: payment_methods {
+    hidden: yes
+    sql: ${TABLE}.paymentMethods ;;
+  }
+  dimension_group: pickup {
+    type: time
+    timeframes: [raw, time, date, week, month, quarter, year]
+    sql: ${TABLE}.pickupTime ;;
+  }
+  dimension: prepaid {
+    type: yesno
+    sql: ${TABLE}.prepaid ;;
+  }
+  dimension: special_cost {
+    type: number
+    sql: ${TABLE}.specialCost ;;
+  }
+  dimension: tariff_id {
+    type: string
+    # hidden: yes
+    sql: ${TABLE}.tariffId ;;
+  }
+  dimension: tariff_type {
+    type: string
+    sql: ${TABLE}.tariffType ;;
+  }
+  dimension: trip_distance {
+    type: number
+    sql: ${TABLE}.tripDistance ;;
+  }
+  dimension: trip_duration {
+    type: number
+    sql: ${TABLE}.tripDuration ;;
+  }
+  dimension: unit_of_length {
+    type: string
+    sql: ${TABLE}.unitOfLength ;;
+  }
+  dimension: vehicle_type {
+    type: string
+    sql: ${TABLE}.vehicleType ;;
+  }
+  dimension: waypoints {
+    hidden: yes
+    sql: ${TABLE}.waypoints ;;
+  }
+  measure: count {
+    type: count
+    drill_fields: [rider__name]
+  }
+  measure: acceptance_rate {
+    type: number
+    value_format_name: percent_1
+    sql: 1.0 * ${count}/nullif(${offer.count},0) ;;
+  }
+  measure: count_of_riders {
+    type: count_distinct
+    value_format_name: decimal_0
+    sql: ${rider__rider_id} ;;
+  }
+}
+
+view: request__waypoints {
+
+  dimension: city {
+    type: string
+    sql: city ;;
+  }
+  dimension: country {
+    type: string
+    map_layer_name: countries
+    sql: country ;;
+  }
+  dimension: country_code {
+    type: string
+    sql: countryCode ;;
+  }
+  dimension: district {
+    type: string
+    sql: district ;;
+  }
+  dimension: exact_lat_lng__lat {
+    type: number
+    sql: ${TABLE}.exactLatLng.lat ;;
+    group_label: "Exact Lat Lng"
+    group_item_label: "Lat"
+  }
+  dimension: exact_lat_lng__lng {
+    type: number
+    sql: ${TABLE}.exactLatLng.lng ;;
+    group_label: "Exact Lat Lng"
+    group_item_label: "Lng"
+  }
+  dimension: house_number {
+    type: string
+    sql: houseNumber ;;
+  }
+  dimension: locality {
+    type: string
+    sql: locality ;;
+  }
+  dimension: place_lat_lng__lat {
+    hidden: yes
+    type: number
+    sql: ${TABLE}.placeLatLng.lat ;;
+    group_label: "Place Lat Lng"
+    group_item_label: "Lat"
+  }
+  dimension: place_lat_lng__lng {
+    hidden: yes
+    type: number
+    sql: ${TABLE}.placeLatLng.lng ;;
+    group_label: "Place Lat Lng"
+    group_item_label: "Lng"
+  }
+  dimension: request_location {
+    type: location
+    sql_latitude: ${place_lat_lng__lat} ;;
+    sql_longitude: ${place_lat_lng__lng} ;;
+  }
+  dimension: poi_name {
+    type: string
+    sql: poiName ;;
+  }
+  dimension: postal_code {
+    type: string
+    sql: postalCode ;;
+  }
+  dimension: premise {
+    type: string
+    sql: premise ;;
+  }
+  dimension: province {
+    type: string
+    sql: province ;;
+  }
+  dimension: request__waypoints {
+    type: string
+    hidden: yes
+    sql: request__waypoints ;;
+  }
+  dimension: street {
+    type: string
+    sql: street ;;
+  }
+  dimension: sub_locality {
+    type: string
+    sql: subLocality ;;
+  }
+}
+
+view: request__extra_options {
+
+  dimension: request__extra_options {
+    type: string
+    sql: request__extra_options ;;
+  }
+}
+
+view: request__payment_methods {
+
+  dimension: request__payment_methods {
+    type: string
+    sql: request__payment_methods ;;
+  }
+}

@@ -1,0 +1,50 @@
+view: update {
+  sql_table_name: `mevron-1330b.mevron_test.update` ;;
+
+  dimension_group: data {
+    hidden: yes
+    type: time
+    timeframes: [raw, date, week, month, quarter, year]
+    convert_tz: no
+    datatype: date
+    sql: ${TABLE}.data_date ;;
+  }
+  dimension: driver_id {
+    hidden: yes
+    type: string
+    sql: ${TABLE}.driverId ;;
+  }
+  dimension: order_id {
+    hidden: yes
+    type: string
+    sql: ${TABLE}.orderId ;;
+  }
+  dimension: status {
+    type: string
+    sql: ${TABLE}.status ;;
+  }
+  dimension: is_complete {
+    type: yesno
+    sql: ${status} like '%FINISHED_PAID%' ;;
+  }
+  dimension: is_cancelled {
+    type: yesno
+    sql: ${status} like '%CANCELLED%' ;;
+  }
+  measure: count_of_cancelled {
+    hidden: yes
+    type: count_distinct
+    sql: ${order_id} ;;
+    filters: [is_cancelled: "Yes"]
+  }
+  measure: count_of_completed {
+    hidden: yes
+    type: count_distinct
+    sql: ${order_id} ;;
+    filters: [is_complete: "Yes"]
+  }
+  measure: count {
+    hidden: yes
+    type: count
+  }
+}

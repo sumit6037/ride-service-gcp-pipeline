@@ -1,0 +1,72 @@
+# Un-hide and use this explore, or copy the joins into another explore, to get all the fully nested relationships from this view
+explore: wallet_details {
+  hidden: yes
+    join: wallet_details__balance {
+      view_label: "Wallet Details: Balance"
+      sql: LEFT JOIN UNNEST(${wallet_details.balance}) as wallet_details__balance ;;
+      relationship: one_to_many
+    }
+}
+view: wallet_details {
+  sql_table_name: `mevron-1330b.mevron_test.wallet_details` ;;
+
+  dimension_group: _partitiondate {
+    type: time
+    timeframes: [raw, date, week, month, quarter, year]
+    convert_tz: no
+    datatype: date
+    sql: ${TABLE}._PARTITIONDATE ;;
+  }
+  dimension_group: _partitiontime {
+    type: time
+    timeframes: [raw, date, week, month, quarter, year]
+    convert_tz: no
+    datatype: date
+    sql: ${TABLE}._PARTITIONTIME ;;
+  }
+  dimension: balance {
+    hidden: yes
+    sql: ${TABLE}.balance ;;
+  }
+  dimension_group: data {
+    type: time
+    timeframes: [raw, date, week, month, quarter, year]
+    convert_tz: no
+    datatype: date
+    sql: ${TABLE}.data_date ;;
+  }
+  dimension: phone {
+    type: number
+    sql: ${TABLE}.phone ;;
+  }
+  dimension: profile_type {
+    type: string
+    sql: ${TABLE}.profileType ;;
+  }
+  dimension: wallet_id {
+    type: string
+    # hidden: yes
+    sql: ${TABLE}.walletId ;;
+  }
+  measure: count {
+    type: count
+    drill_fields: [wallet.wallet_id]
+  }
+}
+
+view: wallet_details__balance {
+
+  dimension: amount {
+    type: number
+    sql: amount ;;
+  }
+  dimension: currency {
+    type: string
+    sql: currency ;;
+  }
+  dimension: wallet_details__balance {
+    type: string
+    hidden: yes
+    sql: wallet_details__balance ;;
+  }
+}
