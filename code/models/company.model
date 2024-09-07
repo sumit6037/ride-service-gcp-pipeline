@@ -1,0 +1,67 @@
+connection: "mevron_looker"
+
+include: "/views/*.view.lkml"                # include all views in the views/ folder in this project
+include: "/derived_tables/*.view.lkml"                # include all views in the views/ folder in this project
+
+explore: summary {
+
+  join: summary__payments {
+    view_label: "Summary: Payments"
+    sql: LEFT JOIN UNNEST(${summary.payments}) as summary__payments ;;
+    relationship: one_to_many
+  }
+
+  join: request {
+    sql_on: ${summary.order_id} = ${request.order_id};;
+    relationship: one_to_one
+  }
+
+  join: request__waypoints {
+    view_label: "Request: Waypoints"
+    sql: LEFT JOIN UNNEST(${request.waypoints}) as request__waypoints ;;
+    relationship: one_to_many
+  }
+  join: request__extra_options {
+    view_label: "Request: Extra Options"
+    sql: LEFT JOIN UNNEST(${request.extra_options}) as request__extra_options ;;
+    relationship: one_to_many
+  }
+  join: request__payment_methods {
+    view_label: "Request: Payment Methods"
+    sql: LEFT JOIN UNNEST(${request.payment_methods}) as request__payment_methods ;;
+    relationship: one_to_many
+  }
+
+  join: offer {
+    sql_on: ${summary.order_id} = ${offer.order_id} ;;
+    relationship: one_to_one
+  }
+
+  join: update {
+    view_label: "Summary"
+    sql_on: ${summary.order_id} = ${update.order_id} ;;
+    relationship: one_to_many
+  }
+
+  join: offer__car__options {
+    view_label: "Offer: Car Options"
+    sql: LEFT JOIN UNNEST(${offer.car__options}) as offer__car__options ;;
+    relationship: one_to_many
+  }
+  join: offer__tariff__payment_methods {
+    view_label: "Offer: Tariff Paymentmethods"
+    sql: LEFT JOIN UNNEST(${offer.tariff__payment_methods}) as offer__tariff__payment_methods ;;
+    relationship: one_to_many
+  }
+
+  join: service_provider_facts {
+    sql_on: ${offer.service_provider__service_provider_id} = ${service_provider_facts.service_provider_id} ;;
+    relationship: many_to_one
+  }
+
+  join: rider_facts {
+    sql_on: ${request.rider__rider_id} = ${rider_facts.rider_id} ;;
+    relationship: many_to_one
+  }
+
+}
