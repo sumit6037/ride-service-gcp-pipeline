@@ -31,6 +31,9 @@ This project is part of a customer engagement with a ride service provider based
 ## Introduction
 The business is expanding across Africa, providing ride services, logistics, and white-labeling options. The white-labeling service allows other operators to use the customer's platform to book rides. This project aims to improve operational efficiency and customer satisfaction by consolidating and visualizing data from multiple API endpoints provided by vendors.
 
+![alt text](https://raw.githubusercontent.com/sumit6037/ride-service-gcp-pipeline/main/architecture.png)
+
+
 ## Data Engineering
 
 ### Data Sources
